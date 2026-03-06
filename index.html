@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VisaSlotBot — Instant VFS Appointment Alerts</title>
+  <meta name="description" content="Stop refreshing VFS. Get instant Telegram alerts when visa appointment slots open at VFS Dublin.">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --border: #1e1e2e;
+      --text: #e4e4ef;
+      --text-muted: #8888a0;
+      --accent: #6c5ce7;
+      --accent-light: #a29bfe;
+      --success: #00d2d3;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Nav */
+    nav {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo span { color: var(--accent-light); }
+    nav a.cta-small {
+      font-size: 0.85rem;
+      padding: 8px 18px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    nav a.cta-small:hover { background: #5b4bd5; }
+
+    /* Hero */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent-light), var(--success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto 32px;
+    }
+    .hero .cta-btn {
+      display: inline-block;
+      padding: 14px 36px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .hero .cta-btn:hover { background: #5b4bd5; transform: translateY(-1px); }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    .stats span {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stats span::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      display: inline-block;
+    }
+
+    /* Sections */
+    section { padding: 60px 0; }
+    section + section { border-top: 1px solid var(--border); }
+    .section-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-light);
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 32px;
+      letter-spacing: -0.01em;
+    }
+
+    /* Steps */
+    .steps {
+      display: grid;
+      gap: 24px;
+    }
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step h3 {
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+    .step p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    /* Pain */
+    .pain-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+    }
+    .pain-block p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+    .pain-block p:last-child { margin-bottom: 0; }
+    .pain-block strong { color: var(--text); }
+
+    /* Pricing */
+    .pricing-card {
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .pricing-card .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    .pricing-card .price {
+      font-size: 2.4rem;
+      font-weight: 800;
+    }
+    .pricing-card .price small {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+    .pricing-card .trial {
+      color: var(--success);
+      font-weight: 600;
+      margin: 8px 0 20px;
+      font-size: 0.95rem;
+    }
+    .pricing-card ul {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 28px;
+    }
+    .pricing-card li {
+      padding: 6px 0;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+    .pricing-card li::before {
+      content: '\2713';
+      color: var(--success);
+      font-weight: 700;
+      margin-right: 10px;
+    }
+    .pricing-card .cta-btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .pricing-card .cta-btn:hover { background: #5b4bd5; }
+
+    /* FAQ */
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-item h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .faq-item p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+    footer a {
+      color: var(--accent-light);
+      text-decoration: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 2rem; }
+      .hero { padding: 50px 0 40px; }
+      .stats { gap: 16px; }
+      .step { flex-direction: column; gap: 12px; }
+      h2 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="#" class="logo">Visa<span>SlotBot</span></a>
+    <a href="https://t.me/Visasl0tbot" class="cta-small">Start Free Trial</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <h1>Stop refreshing VFS.<br><em>Get instant alerts.</em></h1>
+    <p>We monitor VFS Dublin 24/7 for Switzerland, Austria, Liechtenstein &amp; Slovenia visa appointments. The moment a slot opens, you know.</p>
+    <a href="https://t.me/Visasl0tbot" class="cta-btn">Start Free on Telegram</a>
+    <div class="stats">
+      <span>24/7 monitoring</span>
+      <span>Instant Telegram alerts</span>
+      <span>Cancel anytime</span>
+    </div>
+  </div>
+</header>
+
+<section id="how">
+  <div class="container">
+    <div class="section-label">How It Works</div>
+    <h2>Three steps to never miss a slot</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Start the bot</h3>
+          <p>Open <a href="https://t.me/Visasl0tbot" style="color:var(--accent-light)">@Visasl0tbot</a> on Telegram and tap Start. Pick your city and destination country.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h3>Join the alerts channel</h3>
+          <p>You'll get a 7-day free trial instantly. Click the invite link to join your private alerts channel.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Book when a slot appears</h3>
+          <p>The moment a VFS appointment opens, you'll get a Telegram notification. Open VFS and book it before it's gone.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="container">
+    <div class="section-label">Why This Exists</div>
+    <h2>VFS slots vanish in minutes</h2>
+    <div class="pain-block">
+      <p>If you've tried booking a visa appointment at VFS Dublin, you know the drill: refresh the page dozens of times a day, find nothing, and wonder if slots ever appear at all.</p>
+      <p><strong>They do.</strong> But they appear at random times and get snapped up within minutes. By the time you check, they're already gone.</p>
+      <p>VisaSlotBot monitors the VFS booking system around the clock. When a slot opens, it sends you an alert on Telegram within seconds — so you can book it before anyone else.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="container">
+    <div class="section-label">Pricing</div>
+    <h2>Simple, transparent pricing</h2>
+    <div class="pricing-card">
+      <div class="badge">Most Popular</div>
+      <div class="price">&euro;10 <small>/month</small></div>
+      <div class="trial">7-day free trial included</div>
+      <ul>
+        <li>24/7 real-time monitoring</li>
+        <li>Instant Telegram alerts</li>
+        <li>All Dublin VFS routes</li>
+        <li>Cancel anytime — no lock-in</li>
+      </ul>
+      <a href="https://t.me/Visasl0tbot" class="cta-btn">Try Free for 7 Days</a>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="container">
+    <div class="section-label">FAQ</div>
+    <h2>Common questions</h2>
+    <div class="faq-item">
+      <h3>Which VFS centres do you cover?</h3>
+      <p>Currently we cover VFS Dublin for Switzerland, Austria, Liechtenstein, and Slovenia visa appointments. These are all processed through the Austrian Embassy.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How fast are the alerts?</h3>
+      <p>Alerts are sent within seconds of a slot becoming available. VFS slots can disappear in minutes, so speed matters.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Do I need to install anything?</h3>
+      <p>No. Everything runs through Telegram. Just start the bot, join the channel, and wait for alerts. Works on any device.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Can I cancel my subscription?</h3>
+      <p>Yes, anytime. Just send /cancel to the bot. No questions asked, no lock-in period.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>VisaSlotBot &mdash; built to solve a real problem.</p>
+    <p style="margin-top:8px;">Questions? Message <a href="https://t.me/Visasl0tbot">@Visasl0tbot</a> on Telegram.</p>
+  </div>
+</footer>
+
+</body>
+</html>
